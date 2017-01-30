@@ -26,19 +26,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     if (!self.delegate) {
         self.delegate = self;
     }
-
+    
     self.interactivePopGestureRecognizer.delegate = self;
+    
+    self.interactivePopGestureEnabled = YES;
 }
 
 #pragma mark - UINavigationController
 
 - (void)setDelegate:(id<UINavigationControllerDelegate>)delegate
 {
-	self.realDelegate = delegate != self ? delegate : nil;
+    self.realDelegate = delegate != self ? delegate : nil;
     [super setDelegate:delegate ? self : nil];
 }
 
@@ -56,9 +58,9 @@
                     animated:(BOOL)animated
 {
     NSCAssert(self.interactivePopGestureRecognizer.delegate == self, @"AHKNavigationController won't work correctly if you change interactivePopGestureRecognizer's delegate.");
-
+    
     self.duringPushAnimation = NO;
-
+    
     if ([self.realDelegate respondsToSelector:_cmd]) {
         [self.realDelegate navigationController:navigationController didShowViewController:viewController animated:animated];
     }
@@ -72,7 +74,7 @@
         // Disable pop gesture in two situations:
         // 1) when the pop animation is in progress
         // 2) when user swipes quickly a couple of times and animations don't have time to be performed
-        return [self.viewControllers count] > 1 && !self.isDuringPushAnimation;
+        return [self.viewControllers count] > 1 && !self.isDuringPushAnimation && self.interactivePopGestureEnabled;
     } else {
         // default value
         return YES;
